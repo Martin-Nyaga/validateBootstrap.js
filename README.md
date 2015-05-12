@@ -1,5 +1,5 @@
-# validateBootstrap.js
-A simple javascript bootstrap validation suite.
+#validateBootstrap.js
+A simple javascript + bootstrap validation suite.
 
 #Overview
 
@@ -25,7 +25,7 @@ $('input[name=email]').validate({
   email : true
 });
 ```
-</pre>
+
 You may use other jquery selectors too.
 
 For the validation  to work, your input elements must be properly wrapped in the bootstrap `<div class="form-gorup">`, and have a blank `<span class="help-block">` within the div.

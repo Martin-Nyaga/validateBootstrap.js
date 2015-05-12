@@ -29,17 +29,20 @@ function validate_email_format(s){
 }
 
 function remove_errors(el){
-	div=el.parents('div.form-group');
+	var div=el.parents('div.form-group');
 	div.removeClass("has-error");
-	span=div.find('.help-block');
+	var span=div.find('.help-block.bs-validate-errors');
 	span.html('');
 }
 
 function show_errors(el,errors){
-	console.log(errors);
-	div=el.parents('div.form-group');
+	var div=el.parents('div.form-group');
 	div.addClass("has-error");
-	span=div.find('.help-block');
+	if (div.children('.help-block.bs-validate-errors').length===0){
+		var span=$("<span class='help-block bs-validate-errors'></span>").appendTo(div)
+	} else {
+		var span=div.find('.help-block.bs-validate-errors');
+	}
 	errors.forEach(function(i){
 		span.append(i);
 	})
@@ -47,35 +50,41 @@ function show_errors(el,errors){
 
 $.fn.validate = function(obj){
 	remove_errors(this);
-	val=this.val();
-	console.log(val.length);
-	errors=[];
+	var val=this.val();
+	var errors=[];
 
 	if (obj.hasOwnProperty("presence")){
-		res=validate_presence(val);
+		var res=validate_presence(val);
 		if (res==false){
-			err= "<li>".concat(capitalize(this[0].name)," must be filled</li>")
+			var err= "<li>".concat(capitalize(this[0].name)," must be filled</li>")
 			errors.push(err);
 		}
 	}
 
 	if ((obj.hasOwnProperty("length")) && (val.length>0)){
-		len=obj.length;
+		var len=obj.length;
 
 		if (len.hasOwnProperty("min")){
-			min=len.min;
+			var min=len.min;
 		} else {
-			min=0;
+			var min=0;
 		}
+
 		if (len.hasOwnProperty("max")){
-			max=len.max;
+			var max=len.max;
 		} else {
-			max=1000000000;
+			var max=1000000000;
 		}
 
 		res=validate_length(val,min,max);
 		if (res==false){
-			err= "<li>".concat(capitalize(this[0].name)," must be longer than ",min," and shorter than ",max," characters</li>")
+			if (min==0){
+				err=  "<li>".concat(capitalize(this[0].name)," must be shorter than ",max," characters</li>")
+			} else if (max==1000000000){
+				err= "<li>".concat(capitalize(this[0].name)," must be longer than ",min," characters</li>")
+			} else {
+				err= "<li>".concat(capitalize(this[0].name)," must be longer than ",min," and shorter than ",max," characters</li>")	
+			}
 			errors.push(err);
 		}
 	}
@@ -93,4 +102,17 @@ $.fn.validate = function(obj){
 		return false;
 	}
 	return true;
+}
+
+$.fn.valid = function(){
+	var spans=this.find('.bs-validate-errors');
+	var valid=true;
+	spans.each(function(i){
+		var s=$(spans[i]);
+		if (!(s.html()=='')){
+			valid= false;
+			return false;
+		}
+	});
+	return valid;
 }
