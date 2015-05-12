@@ -56,13 +56,25 @@ $.fn.validate = function(obj){
 	if (obj.hasOwnProperty("presence")){
 		var res=validate_presence(val);
 		if (res==false){
-			var err= "<li>".concat(capitalize(this[0].name)," must be filled</li>")
+			if (jQuery.isPlainObject(obj.presence)){
+				if (obj.presence.hasOwnProperty("message")){
+					var err="<li>" + obj.presence.message + "</li>" ;
+				}
+			} else {
+				var err= "<li>".concat(capitalize(this[0].name)," must be filled</li>")
+			}
+
 			errors.push(err);
 		}
 	}
 
 	if ((obj.hasOwnProperty("length")) && (val.length>0)){
 		var len=obj.length;
+
+		if (!(jQuery.isPlainObject(len))){
+			new_len={min:len,max:len};
+			len=new_len;
+		}
 
 		if (len.hasOwnProperty("min")){
 			var min=len.min;
@@ -78,13 +90,18 @@ $.fn.validate = function(obj){
 
 		res=validate_length(val,min,max);
 		if (res==false){
-			if (min==0){
+			if (len.hasOwnProperty("message")){
+				err= "<li>" + len.message + "</li>"
+			} else if (min==0){
 				err=  "<li>".concat(capitalize(this[0].name)," must be shorter than ",max," characters</li>")
 			} else if (max==1000000000){
 				err= "<li>".concat(capitalize(this[0].name)," must be longer than ",min," characters</li>")
+			} else if (min==max){
+				err="<li>".concat(capitalize(this[0].name)," must be exactly ",min," characters long</li>")
 			} else {
 				err= "<li>".concat(capitalize(this[0].name)," must be longer than ",min," and shorter than ",max," characters</li>")	
 			}
+
 			errors.push(err);
 		}
 	}
@@ -92,7 +109,15 @@ $.fn.validate = function(obj){
 	if ((obj.hasOwnProperty("email")) && (val.length>0)){
 		res=validate_email_format(val);
 		if (res==false){
-			err= "<li>".concat(capitalize(this[0].name)," must be correctly formatted</li>")
+
+			if (jQuery.isPlainObject(obj.email)){
+				if (obj.email.hasOwnProperty("message")){
+					var err= "<li>" + obj.email.message + "</li>"
+				}
+			} else {
+				err= "<li>".concat(capitalize(this[0].name)," must be correctly formatted</li>");
+			}
+			
 			errors.push(err);
 		}
 	}
@@ -101,6 +126,7 @@ $.fn.validate = function(obj){
 		show_errors(this,errors);
 		return false;
 	}
+
 	return true;
 }
 
