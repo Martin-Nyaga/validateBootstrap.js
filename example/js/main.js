@@ -1,7 +1,6 @@
 $(function(){
 
 	$("#validate").submit(function(event){
-		event.preventDefault();
 
 		$("[name=name]").validate({
 			presence: { message:"You must fill in your name" },
@@ -19,7 +18,12 @@ $(function(){
 			length: { min:2, max:5, message:"Must be between 2 and 5 characters" }
 		});
 
-		console.log($("#validate").valid());
+		if($("#validate").valid()){
+			return true;
+		} else {
+			event.preventDefault();
+		}
+
 	});
 
 })

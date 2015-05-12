@@ -13,7 +13,7 @@ In your javascript, use the validation suite on input elements as follows:
 //replace name_input below with the id of your element
 
 $('#name_input').validate({
-  presence : true,
+  presence : { message:'' This field is required},
   length : { min:5, max:55 }
 });
 ```
@@ -28,7 +28,7 @@ $('input[name=email]').validate({
 
 You may use other jquery selectors too.
 
-For the validation  to work, your input elements must be properly wrapped in the bootstrap `<div class="form-gorup">`, and have a blank `<span class="help-block">` within the div.
+For the validation  to work, your input elements must be properly wrapped in the bootstrap `<div class="form-gorup">`.
 
 #Validateable Parameters
 
@@ -38,3 +38,14 @@ For the validation  to work, your input elements must be properly wrapped in the
 | Length | Either minimum or maximum values (or both) must be provided: `length: { min:value, max:value }` |
 | Email | Validates email format: `email:true` |
 
+For each parameter, a `message` option may be passed. For parameters which take a 'true' value, the message alone may be given eg
+```javascript
+
+$('#name_input').validate({
+  //presence:true has been replaced with the message
+
+  presence : { message:'This field is required' },
+  length : { min:5, max:55, message:'Length is invalid' }
+});
+
+```
